@@ -30,9 +30,25 @@ namespace CSampleClient
 				case PROTOCOL.CHAT_MSG_ACK:
 					{
 						string text = msg.pop_string();
-						Console.WriteLine(string.Format("text {0}", text));
+						Console.WriteLine(string.Format("받 text {0}", text));
 					}
-					break;
+                    break;
+                case PROTOCOL.USER_INFO:
+                    {
+                        short id = msg.pop_int16();
+                        Console.WriteLine(string.Format("yourid {0}", id));
+                    }
+                    break;
+                case PROTOCOL.MOVE_CAST:
+                    {
+                        short userid = msg.pop_int16();
+                        float x = msg.pop_float();
+                        float y = msg.pop_float();
+                        float z = msg.pop_float();
+                        float r = msg.pop_float();
+                        Console.WriteLine($"move {userid} {x} {y} {z} {r}");
+					}
+                    break;
 			}
 		}
 

@@ -236,6 +236,7 @@ namespace FreeNet
 		//
 		private void process_receive(SocketAsyncEventArgs e)
 		{
+            if (e.UserToken == null) return;
             CUserToken token = e.UserToken as CUserToken;
             if (e.BytesTransferred > 0 && e.SocketError == SocketError.Success)
             {

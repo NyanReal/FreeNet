@@ -8,17 +8,22 @@ using FreeNet;
 namespace CSampleServer
 {
 	using GameServer;
+    using System.Reflection.Metadata;
+    using System.Runtime.CompilerServices;
 
-	/// <summary>
-	/// 하나의 session객체를 나타낸다.
-	/// </summary>
-	class CGameUser : IPeer
+    /// <summary>
+    /// 하나의 session객체를 나타낸다.
+    /// </summary>
+    class CGameUser : IPeer
 	{
-		CUserToken token;
+        public short sig { get; private set; }
 
-		public CGameUser(CUserToken token)
+        CUserToken token;
+
+		public CGameUser(CUserToken token, short sig)
 		{
 			this.token = token;
+            this.sig = sig;
 			this.token.set_peer(this);
 		}
 
@@ -47,41 +52,58 @@ namespace CSampleServer
 
 		void IPeer.on_message(CPacket msg)
 		{
-            // 에코서버 테스트할 때 사용함.
-            // Remove below comments to use echo server.
-            //send(msg);
-            //return;
-
-            // ex)
             PROTOCOL protocol = (PROTOCOL)msg.pop_protocol_id();
-            //Console.WriteLine("------------------------------------------------------");
-            //Console.WriteLine("protocol id " + protocol);
+            Console.WriteLine("------------------------------------------------------ protocol id " + protocol);
+
             switch (protocol)
             {
                 case PROTOCOL.CHAT_MSG_REQ:
-                    {
-                        string text = msg.pop_string();
-                        Console.WriteLine(string.Format("text {0}", text));
-
-                        CPacket response = CPacket.create((short)PROTOCOL.CHAT_MSG_ACK);
-                        response.push(text);
-                        send(response);
-
-                        if (text.Equals("exit"))
-                        {
-                            // 대량의 메시지를 한꺼번에 보낸 후 종료하는 시나리오 테스트.
-                            for (int i = 0; i < 1000; ++i)
-                            {
-                                CPacket dummy = CPacket.create((short)PROTOCOL.CHAT_MSG_ACK);
-                                dummy.push(i.ToString());
-                                send(dummy);
-                            }
-
-                            this.token.ban();
-                        }
-                    }
+                    ProcChat(msg);
+                    break;
+                case PROTOCOL.MOVE_REQ:
+                    ProcMove(msg);
                     break;
             }
         }
-	}
+
+        private void ProcMove(CPacket msg)
+        {
+            short userid = sig;
+            float x = msg.pop_float();
+            float y = msg.pop_float();
+            float z = msg.pop_float();
+            float r = msg.pop_float();
+            Console.WriteLine($"move {sig} {x} {y} {z} {r}");
+            CPacket response = CPacket.create((short)PROTOCOL.MOVE_CAST);
+            response.push(userid);
+            response.push(x);
+            response.push(y);
+            response.push(z);
+            response.push(r);
+            Program.SendAll(response);
+        }
+
+        private static void ProcChat(CPacket msg)
+        {
+            string text = msg.pop_string();
+            Console.WriteLine(string.Format("text {0}", text));
+
+            CPacket response = CPacket.create((short)PROTOCOL.CHAT_MSG_ACK);
+            response.push(text);
+            //send(response);
+
+            Program.SendAll(response);
+
+            //if (text.Equals("exit"))
+            //{                            
+            //    for (int i = 0; i < 1000; ++i)
+            //    {
+            //        CPacket dummy = CPacket.create((short)PROTOCOL.CHAT_MSG_ACK);
+            //        dummy.push(i.ToString());
+            //        send(dummy);
+            //    }
+            //    this.token.ban();
+            //}
+        }
+    }
 }

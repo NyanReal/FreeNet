@@ -26,8 +26,17 @@ namespace CSampleClient
 			// endpoint정보를 갖고있는 Connector생성. 만들어둔 NetworkService객체를 넣어준다.
 			CConnector connector = new CConnector(service);
 			// 접속 성공시 호출될 콜백 매소드 지정.
-			connector.connected_callback += on_connected_gameserver;
-			IPEndPoint endpoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 7979);
+
+			var uri = "sam.gamebass.net";
+            var addresses = Dns.GetHostAddresses(uri);
+
+			foreach( var address in addresses )
+			{
+				Console.WriteLine(address.ToString());
+			}
+
+            connector.connected_callback += on_connected_gameserver;
+            IPEndPoint endpoint = new IPEndPoint(addresses[0], 3369);
 			connector.connect(endpoint);
 			//System.Threading.Thread.Sleep(10);
 
@@ -40,9 +49,21 @@ namespace CSampleClient
 					break;
 				}
 
-				CPacket msg = CPacket.create((short)PROTOCOL.CHAT_MSG_REQ);
-				msg.push(line);
-				game_servers[0].send(msg);
+				if (line.StartsWith("move"))
+				{
+					CPacket msg = CPacket.create((short)PROTOCOL.MOVE_REQ);
+					msg.push(1.0f); // x
+					msg.push(2.0f); // y 
+					msg.push(3.0f); // z
+					msg.push(4.0f); // r
+					game_servers[0].send(msg);
+				}
+				else
+				{
+					CPacket msg = CPacket.create((short)PROTOCOL.CHAT_MSG_REQ);
+					msg.push(line);
+					game_servers[0].send(msg);
+				}
 			}
 
 			((CRemoteServerPeer)game_servers[0]).token.disconnect();

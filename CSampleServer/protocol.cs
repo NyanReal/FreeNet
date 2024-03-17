@@ -12,7 +12,10 @@ namespace GameServer
 
 		CHAT_MSG_REQ = 1,
 		CHAT_MSG_ACK = 2,
+        MOVE_REQ = 3,
+        MOVE_CAST = 4,
+        USER_INFO = 5,
 
-		END
+        END
 	}
 }
