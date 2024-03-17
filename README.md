@@ -5,7 +5,9 @@ FreeNet
 
 포크 변경점
 ----------
-캐릭터 이동 관련 패킷추가 및 닷넷 4.8.1 6.0 대응
+* 캐릭터 이동 관련 패킷추가 및 닷넷 4.8.1 6.0 대응
+
+* 유니티 프로젝트 리포지터리 : [https://github.com/NyanReal/unitymobclient](https://github.com/NyanReal/unitymobclient)
 
 Version
 ----------
