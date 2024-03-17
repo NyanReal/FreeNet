@@ -3,6 +3,10 @@ FreeNet
 * C# Network library. Asynchronous. TCP. GameServer.
 * Email me if you have any questions : lee.seokhyun@gmail.com
 
+포크 변경점
+----------
+캐릭터 이동 관련 패킷추가 및 닷넷 4.8.1 6.0 대응
+
 Version
 ----------
 * v0.1.1 Apply .Net Core
