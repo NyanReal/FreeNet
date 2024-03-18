@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FreeNet;
+using Protocol;
 
 namespace CSampleServer
 {
@@ -96,9 +97,13 @@ namespace CSampleServer
                 {
                     if(ret == 0)
                     {
-                        CPacket msg = CPacket.create((short)GameServer.PROTOCOL.USER_INFO);
-                        msg.push(user.sig);
-                        user.send(msg);
+                        SCUserInfo msg = new SCUserInfo();
+                        msg.UserID = user.sig;
+                        //CPacket msg = CPacket.create((short)GameServer.PROTOCOL.USER_INFO);
+                        //msg.push(user.sig);
+                        //user.send(msg);
+
+                        user.send(msg.ToPacket());
                         if(!userids.TryUpdate(user.sig, 1, 0))
                         {
                             Console.WriteLine("id info send state update fail!");

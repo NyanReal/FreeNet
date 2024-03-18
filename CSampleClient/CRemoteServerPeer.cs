@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using FreeNet;
+using Protocol;
 
 namespace CSampleClient
 {
-	using GameServer;
 
-	class CRemoteServerPeer : IPeer
+    class CRemoteServerPeer : IPeer
 	{
 		public CUserToken token { get; private set; }
 
@@ -24,30 +20,34 @@ namespace CSampleClient
 		{
             System.Threading.Interlocked.Increment(ref this.recv_count);
 
-			PROTOCOL protocol_id = (PROTOCOL)msg.pop_protocol_id();
+			EPacketProtocol protocol_id = msg.pop_protocol_id().ToProtocol();
 			switch (protocol_id)
 			{
-				case PROTOCOL.CHAT_MSG_ACK:
-					{
-						string text = msg.pop_string();
-						Console.WriteLine(string.Format("받 text {0}", text));
-					}
-                    break;
-                case PROTOCOL.USER_INFO:
+				//case EPacketProtocol.CHAT_MSG_ACK:
+				//	{
+				//		string text = msg.pop_string();
+				//		Console.WriteLine(string.Format("받 text {0}", text));
+				//	}
+    //                break;
+                case EPacketProtocol.USER_INFO:
                     {
                         short id = msg.pop_int16();
                         Console.WriteLine(string.Format("yourid {0}", id));
                     }
                     break;
-                case PROTOCOL.MOVE_CAST:
+                case EPacketProtocol.MOVE_CAST:
                     {
-                        short userid = msg.pop_int16();
-                        float x = msg.pop_float();
-                        float y = msg.pop_float();
-                        float z = msg.pop_float();
-                        float r = msg.pop_float();
-                        Console.WriteLine($"move {userid} {x} {y} {z} {r}");
-					}
+                        SCMoveCast ret = new SCMoveCast(msg);
+                        Console.WriteLine(ret.ToString());
+                        //short userid = msg.pop_int16();
+                        //float x = msg.pop_float();
+                        //float y = msg.pop_float();
+                        //float z = msg.pop_float();
+                        //float r = msg.pop_float();
+                        //Console.WriteLine($"move {userid} {x} {y} {z} {r}");
+                    }
+                    break;
+                default:
                     break;
 			}
 		}

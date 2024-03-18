@@ -9,9 +9,9 @@ using FreeNet;
 
 namespace CSampleClient
 {
-	using GameServer;
+    using Protocol;
 
-	class Program
+    class Program
 	{
 		static List<IPeer> game_servers = new List<IPeer>();
 
@@ -51,7 +51,7 @@ namespace CSampleClient
 
 				if (line.StartsWith("move"))
 				{
-					CPacket msg = CPacket.create((short)PROTOCOL.MOVE_REQ);
+					CPacket msg = CPacket.create((short)EPacketProtocol.MOVE_REQ);
 					msg.push(1.0f); // x
 					msg.push(2.0f); // y 
 					msg.push(3.0f); // z
@@ -60,9 +60,9 @@ namespace CSampleClient
 				}
 				else
 				{
-					CPacket msg = CPacket.create((short)PROTOCOL.CHAT_MSG_REQ);
-					msg.push(line);
-					game_servers[0].send(msg);
+					//CPacket msg = CPacket.create((short)EPacketProtocol.CHAT_MSG_REQ);
+					//msg.push(line);
+					//game_servers[0].send(msg);
 				}
 			}
 
